@@ -1,0 +1,20 @@
+Date: 16/12/2024
+Time: 12:34
+Group ID: to brian
+Message: send a message to brian
+--------------------
+Date: 16/12/2024
+Time: 12:38
+Group ID:  to brian
+Message: send a message to brian
+--------------------
+Date: 16/12/2024
+Time: 12:45
+Phone Number: +254795739291
+Message: hi how are you doing
+--------------------
+Date: 16/12/2024
+Time: 12:47
+Phone Number: +254708781407
+Message: hey give me back my phone
+--------------------
