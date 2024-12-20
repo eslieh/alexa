@@ -23,3 +23,23 @@ Time: 8:38
 Phone Number: +254780271048
 Message: hello how are you doing
 --------------------
+Date: 19/12/2024
+Time: 22:39
+Phone Number: +254716297735
+Message: hi how are you
+--------------------
+Date: 20/12/2024
+Time: 6:5
+Phone Number: +254716297735
+Message: good morning
+--------------------
+Date: 20/12/2024
+Time: 6:16
+Phone Number: +254708781407
+Message: hey I'm just testing the app so don't mind the message
+--------------------
+Date: 20/12/2024
+Time: 6:17
+Phone Number: +254708781407
+Message: hello the app just work
+--------------------

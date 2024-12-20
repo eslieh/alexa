@@ -5,7 +5,7 @@ import datetime
 import wikipedia
 from gtts import gTTS
 import pygame
-from actions import signup, login, log_action
+from actions import signup, login, get_contact, add_contact, log_action
 from database import Session
 import speech_recognition as sr
 from models import User
@@ -34,7 +34,7 @@ def play_sound():
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         continue
-def take_command( username):
+def take_command(username, user_id):
         timeout=3
         wake_sound = ""  # Initialize 'command' to avoid UnboundLocalError
         try:
@@ -47,7 +47,7 @@ def take_command( username):
                 wake_sound = listener.recognize_google(voice)
                 wake_sound = wake_sound.lower()
                 print(f'Command: {wake_sound}')
-                run_alexa(wake_sound, username)
+                run_alexa(wake_sound, username, user_id)
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio.")
         except sr.RequestError as e:
@@ -55,7 +55,7 @@ def take_command( username):
         except Exception as e:
             print(f"Error: {e}")
 
-def run_alexa(wake_sound, username):
+def run_alexa(wake_sound, username, user_id):
     print("Waiting for wake-up command...")
     if "alexa" in wake_sound or "hey alexa" in wake_sound or "hello alexa" in wake_sound:
         print("I'm here!")
@@ -66,9 +66,9 @@ def run_alexa(wake_sound, username):
             say(f"What's Up ,{username}")
         else:
             say("Hello there, how can I be of service?")
-        take_request()
+        take_request(username, user_id)
 
-def take_request():
+def take_request(username, user_id):
     query = ""
     try:
         with sr.Microphone() as source:
@@ -79,15 +79,16 @@ def take_request():
             query = listener.recognize_google(voice)
             query = query.lower()
             print(f'Working on... {query}')
-            process_alexa(query)
+            process_alexa(query, username, user_id)
     except Exception as e:
         print(f"Error: {e}")
 
-def process_alexa(query):
+def process_alexa(query, username, user_id):
     if 'play' in query:
         song = query.replace('play', '').strip()
         say(f'Playing {song}')
         pywhatkit.playonyt(song)
+
     elif 'time' in query:
         time = datetime.datetime.now().strftime('%I:%M %p')
         say(f'Current time is {time}')
@@ -113,23 +114,42 @@ def process_alexa(query):
         say(joke)
     elif 'send' in query and 'message' in query:
         try:
-            contact = query.replace('send a message to', '').strip().split(' ')[0]  
-            say(f'What do you want to tell {contact}?')
+            # Extract contact name
+            contact_name = query.replace('send a message to', '').strip().split(' ')[0]
+            
+            # Fetch the contact's phone number
+            contact_exists, phone_number = get_contact(user_id, contact_name)
+            
+            if not contact_exists:
+                phone_number = input(f"{contact_name} is not in your contacts. Enter their phone number: ")
+                say(f"{contact_name} is not in your contacts. Enter their phone number: ")
+                if phone_number:
+                    add_contact(user_id, contact_name, phone_number)
+                    say(f"{contact_name} has been added to your contacts.")
+                else:
+                    say("No phone number provided. Cannot send the message.")
+                    return
+            
+            # Get the message content
+            say(f'What do you want to tell {contact_name}?')
             with sr.Microphone() as source:
                 listener.adjust_for_ambient_noise(source)
                 print("Listening for the message...")
                 voice = listener.listen(source, timeout=7.5)
                 message = listener.recognize_google(voice)
                 print(f"Message: {message}")
-                phone_number = input(f"Enter {contact}'s phone number (including country code, e.g., +1 for US): ")
-                if phone_number and message:
-                    say(f'Sending message to {contact}: {message}')
-                    pywhatkit.sendwhatmsg_instantly(phone_number, message)  
+            
+                # Send the message
+                if message:
+                    say(f'Sending message to {contact_name}: {message}')
+                    pywhatkit.sendwhatmsg_instantly(phone_number, message)
+                    log_action(user_id, 'send_message', f"To: {contact_name}, Message: {message}")
                 else:
-                    say('Sorry, I could not extract the contact or the message.')
+                    say("Sorry, I could not extract the message.")
         except Exception as e:
-            say('Sorry, I could not send the message.')
+            say("Sorry, I could not send the message.")
             print(f"Error: {e}")
+
     elif 'news' in query:
         say("Fetching the latest news.")
         news = get_news()
@@ -220,13 +240,13 @@ def main():
     elif choice == "2":
         username = input("Enter your username: ")
         password = input("Enter your password: ")
-        success, username = login(username, password)
+        success, username, user_id = login(username, password)
         if success:
             print(f"Login successful! Welcome back, {username}")
             say(f"Login successful! Welcome back, {username}")
             # Main app loop
             while True:
-                take_command(username=username) 
+                take_command(username=username, user_id = user_id) 
             # After login, you could proceed with further actions
         else:
             print("Login failed.")

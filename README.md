@@ -31,6 +31,7 @@ You can install the required dependencies using pip:
 
 ```bash
 pip install pygame pywhatkit requests wikipedia gtts werkzeug SpeechRecognition
+```
 
 alexa/
 │
@@ -43,7 +44,7 @@ alexa/
 ├── wake.mp3                # Wake-up sound file
 └── README.md               # List of project dependencies
 
-Usage
+## Usage
 Sign Up: When you run the program for the first time, you can choose to sign up by providing a username, password, and name. This will create a user entry in the database.
 
 Login: If you have already signed up, you can log in by providing your credentials.
@@ -71,14 +72,14 @@ I'm here!
 Listening for a command...
 Got it... Playing Shape of You by Ed Sheeran
 
-Notes
+## Notes
 The program uses gTTS to convert text to speech. Ensure that your system has access to an internet connection for this functionality.
 The program also uses pywhatkit to play music on YouTube. Ensure your system can open web pages to use this feature.
 You will need API keys for NewsAPI and OpenWeather to fetch news and weather data. Make sure to replace the placeholder API keys in the code with your own keys.
 Contributing
 If you would like to contribute to this project, feel free to fork the repository and submit pull requests. For any issues or feature requests, please open an issue on the GitHub repository.
 
-License
+## License
 This project is licensed under the MIT License.
 
 
