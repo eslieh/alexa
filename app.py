@@ -76,6 +76,7 @@ def take_request(username, user_id):
             print("Listening for a command...")
             voice = listener.listen(source, timeout=6.5)
             print("Got it...")
+            say("Got it")
             query = listener.recognize_google(voice)
             query = query.lower()
             print(f'Working on... {query}')
@@ -88,7 +89,7 @@ def process_alexa(query, username, user_id):
         song = query.replace('play', '').strip()
         say(f'Playing {song}')
         pywhatkit.playonyt(song)
-
+        log_action(user_id, 'music on YT', f"Music: {song}, query: {query}")
     elif 'time' in query:
         time = datetime.datetime.now().strftime('%I:%M %p')
         say(f'Current time is {time}')

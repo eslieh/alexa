@@ -40,6 +40,7 @@ alexa/
 │   └── user_data.db        # SQLite database for storing user information
 ├── models.py               # This is where all the actions of ORM happends
 ├── create_tables.py        # this file is excecuted once during the installation to create tables
+├── delete_tables.py        # this file is excecuted to delete all records in the tables
 ├── actions.py              # This is where all the actions of database comminication take place
 ├── wake.mp3                # Wake-up sound file
 └── README.md               # List of project dependencies
